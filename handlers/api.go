@@ -3,11 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	_ "log"
 	"net/http"
 	"api/database"
-
-	_ "github.com/gorilla/mux"
 )
 
 type User struct {
