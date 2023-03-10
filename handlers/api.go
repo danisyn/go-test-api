@@ -6,7 +6,6 @@ import (
 	_ "log"
 	"net/http"
 	"api/database"
-	"time"
 
 	_ "github.com/gorilla/mux"
 )
@@ -17,7 +16,6 @@ type User struct {
 	Password string `json:"password"`
 }
 
-var status []string
 
 func GetTest(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
@@ -27,21 +25,19 @@ func GetTest(w http.ResponseWriter, r *http.Request){
 	exists := database.GetUser(user.Name, user.Password, user.Token)
 	if exists != false {
 		fmt.Fprint(w,"True")
-		status = append(status, "True")
 	} else {
 		fmt.Fprint(w,"False")
-		status = append(status, "False")
 	}
 	
 }
 
-func Logs(w http.ResponseWriter, r *http.Request){
-	body := " <html><head><title>The Tudors</title><meta http-equiv="+"refresh"+" content="+"1"+" /></head><h1>LOGS</h1>"
-	fmt.Fprintln(w,body)
-	for _ , v := range status {
-		now := time.Now()
-		time := fmt.Sprint(now)
-		fmt.Fprintln(w, "<p>"+ time + "" +v+"</p>")
+func GetConfig(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var user User
+	json.NewDecoder(r.Body).Decode(&user)
+	exists := database.GetUser(user.Name, user.Password, user.Token)
+	if exists != false {
+		_, response := database.GetConfig(user.Token, exists)
+		fmt.Fprint(w, response)
 	}
-	
 }
